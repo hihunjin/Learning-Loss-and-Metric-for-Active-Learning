@@ -26,6 +26,7 @@ from torchvision.datasets import CIFAR100, CIFAR10
 import visdom
 from tqdm import tqdm
 import argparse
+import sys
 
 # Custom
 import models.resnet as resnet
@@ -293,19 +294,19 @@ if __name__ == '__main__':
 
             # Index in ascending order
             arg = np.argsort(uncertainty) 
-            from IPython.core.interactiveshell import InteractiveShell
-            InteractiveShell.ast_node_interactivity = "all"
-            np.set_printoptions(threshold=sys.maxsize)
-            with open('loss_predloss_picked.txt','w') as f:
-                f.write('pred_loss_picked_'+str(cycle)+'\n')
-                f.write(str(np.sort(uncertainty)[-ADDENDUM:]))
-                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
-                f.write(str(real_loss[arg][-ADDENDUM:].tolist()))
-            with open('loss_predloss_unpicked.txt','w') as f:
-                f.write('pred_loss_picked_'+str(cycle)+'\n')
-                f.write(str(np.sort(uncertainty)[:-ADDENDUM]))
-                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
-                f.write(str(real_loss[arg][:-ADDENDUM].tolist()))
+#            from IPython.core.interactiveshell import InteractiveShell
+#            InteractiveShell.ast_node_interactivity = "all"
+#            np.set_printoptions(threshold=sys.maxsize)
+#            with open('loss_predloss_picked.txt','w') as f:
+#                f.write('pred_loss_picked_'+str(cycle)+'\n')
+#                f.write(str(np.sort(uncertainty)[-ADDENDUM:]))
+#                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
+#                f.write(str(real_loss[arg][-ADDENDUM:].tolist()))
+#            with open('loss_predloss_unpicked.txt','w') as f:
+#                f.write('pred_loss_picked_'+str(cycle)+'\n')
+#                f.write(str(np.sort(uncertainty)[:-ADDENDUM]))
+#                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
+#                f.write(str(real_loss[arg][:-ADDENDUM].tolist()))
 
 
             
