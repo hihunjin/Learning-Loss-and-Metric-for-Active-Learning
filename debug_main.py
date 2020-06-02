@@ -122,7 +122,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         elif args.loss == 'NCALoss':
             loss_fuc = losses.NCALoss()
         elif args.loss == 'GeneralizedLiftedStructureLoss':
-            loss_fuc = GeneralizedLiftedStructureLoss(neg_margin = 0.1)
+            loss_fuc = losses.GeneralizedLiftedStructureLoss(neg_margin = 0.1)
         elif args.loss == 'NTXentLoss':
             loss_fuc = NTXentLoss(temperature=0.1)
         m_module_tloss  = loss_fuc(embeddings, labels)
