@@ -40,6 +40,7 @@ class LossNet(nn.Module):
         out4 = self.GAP4(features[3])
         out4 = out4.view(out4.size(0), -1)
         out4 = F.relu(self.FC4(out4))
-
-        out = self.linear(torch.cat((out1, out2, out3, out4), 1))
-        return out
+        
+        embeddings = torch.cat((out1, out2, out3, out4), 1)
+        out = self.linear(embeddings)
+        return out, embeddings
