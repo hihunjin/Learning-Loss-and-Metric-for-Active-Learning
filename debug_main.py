@@ -25,6 +25,7 @@ from torchvision.datasets import CIFAR100, CIFAR10
 # Utils
 import visdom
 from tqdm import tqdm
+import argparse
 
 # Custom
 import models.resnet as resnet
@@ -33,6 +34,12 @@ from debug_config import *
 from data.sampler import SubsetSequentialSampler
 from pytorch_metric_learning import losses
 
+
+##parsing
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--loss', type=str, default = "TripletMarginLoss")
+args = parser.parse_args()
 ##
 # Data
 train_transform = T.Compose([
@@ -107,7 +114,17 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
 
         m_backbone_loss = torch.sum(target_loss) / target_loss.size(0)
         m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
-        m_module_tloss  = losses.TripletMarginLoss(margin=0.1)(embeddings, labels)
+        if args.loss == 'TripletMarginLoss':
+            loss_fuc = losses.TripletMarginLoss(margin=0.1)
+        elif args.loss == 'NPairsLoss':
+            loss_fuc = losses.NPairsLoss()
+        elif args.loss == 'NCALoss':
+            loss_fuc = losses.NCALoss()
+        elif args.loss == 'GeneralizedLiftedStructureLoss':
+            loss_fuc = GeneralizedLiftedStructureLoss(neg_margin = 0.1)
+        elif args.loss == 'NTXentLoss':
+            loss_fuc = NTXentLoss(temperature=0.1)
+        m_module_tloss  = loss_fuc(embeddings, labels)
         loss            = m_backbone_loss + WEIGHT * m_module_loss + WEIGHT2 * m_module_tloss
 
         loss.backward()
