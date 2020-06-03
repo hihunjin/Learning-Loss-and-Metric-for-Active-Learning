@@ -125,7 +125,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             loss_fuc = losses.GeneralizedLiftedStructureLoss(neg_margin = 0.1)
         elif args.loss == 'NTXentLoss':
             loss_fuc = losses.NTXentLoss(temperature=0.1)
-        elif args.loss == ContrastiveLoss:
+        elif args.loss == 'ContrastiveLoss':
             loss_fuc = losses.ContrastiveLoss()
         m_module_tloss  = loss_fuc(embeddings, labels)
         loss            = m_backbone_loss + WEIGHT * m_module_loss + WEIGHT2 * m_module_tloss
