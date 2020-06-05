@@ -127,7 +127,11 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             loss_fuc = losses.NTXentLoss(temperature=0.1)
         elif args.loss == 'ContrastiveLoss':
             loss_fuc = losses.ContrastiveLoss()
-        m_module_tloss  = loss_fuc(embeddings, labels)
+        
+        if args.loss == 'None':
+            m_module_tloss = 0
+        else:
+            m_module_tloss  = loss_fuc(embeddings, labels)
         loss            = m_backbone_loss + WEIGHT * m_module_loss + WEIGHT2 * m_module_tloss
 
         loss.backward()
@@ -209,22 +213,22 @@ def get_uncertainty(models, unlabeled_loader):
     models['backbone'].eval()
     models['module'].eval()
     uncertainty = torch.tensor([]).cuda()
-    # real_loss = torch.tensor([]).cuda()
+    real_loss = torch.tensor([]).cuda()
 
     with torch.no_grad():
         for (inputs, labels) in unlabeled_loader:
             inputs = inputs.cuda()
-            # labels = labels.cuda()
+            labels = labels.cuda()
 
             scores, features = models['backbone'](inputs)
             pred_loss = models['module'](features)[0]
-            # real_losst = criterion(scores, labels) # ground truth loss
+            real_losst = criterion(scores, labels) # ground truth loss
             pred_loss = pred_loss.view(pred_loss.size(0))
             
-            # real_loss = torch.cat((real_loss,real_losst),0)
+            real_loss = torch.cat((real_loss,real_losst),0)
             uncertainty = torch.cat((uncertainty, pred_loss), 0)
     
-    return uncertainty.cpu()#, real_loss.cpu()
+    return uncertainty.cpu(), real_loss.cpu()
 
 
 ##
@@ -291,27 +295,18 @@ if __name__ == '__main__':
                                           pin_memory=True)
 
             # Measure uncertainty of each data points in the subset
-            # uncertainty, real_loss = get_uncertainty(models, unlabeled_loader)
-            uncertainty = get_uncertainty(models, unlabeled_loader)
+            uncertainty, real_loss = get_uncertainty(models, unlabeled_loader)
+            # uncertainty = get_uncertainty(models, unlabeled_loader)
 
             # Index in ascending order
-            arg = np.argsort(uncertainty) 
-#            from IPython.core.interactiveshell import InteractiveShell
-#            InteractiveShell.ast_node_interactivity = "all"
-#            np.set_printoptions(threshold=sys.maxsize)
-#            with open('loss_predloss_picked.txt','w') as f:
-#                f.write('pred_loss_picked_'+str(cycle)+'\n')
-#                f.write(str(np.sort(uncertainty)[-ADDENDUM:]))
-#                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
-#                f.write(str(real_loss[arg][-ADDENDUM:].tolist()))
-#            with open('loss_predloss_unpicked.txt','w') as f:
-#                f.write('pred_loss_picked_'+str(cycle)+'\n')
-#                f.write(str(np.sort(uncertainty)[:-ADDENDUM]))
-#                f.write('\n'+'real_loss_picked_'+str(cycle)+'\n')
-#                f.write(str(real_loss[arg][:-ADDENDUM].tolist()))
-
-
+            arg = np.argsort(uncertainty)
             
+            # Plot
+            import plot.plotting as pt
+            pt.dot_plot(np.sort(uncertainty)[-(SUBSET//10):],real_loss[arg][-(SUBSET//10):].tolist(), loc = '.', name = 'picked.png')
+            pt.dot_plot(np.sort(uncertainty)[:-(SUBSET//10)], real_loss[arg][:-(SUBSET//10)].tolist(), loc = '.', name = 'unpicked.png')
+            import sys; sys.exit()
+
             # Update the labeled dataset and the unlabeled dataset, respectively
             labeled_set += list(torch.tensor(subset)[arg][-ADDENDUM:].numpy())
             temp_loader = DataLoader(cifar10_unlabeled, batch_size=BATCH,
