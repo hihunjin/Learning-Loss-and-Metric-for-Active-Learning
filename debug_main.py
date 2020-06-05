@@ -40,6 +40,7 @@ from pytorch_metric_learning import losses
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--loss', type=str, default = "TripletMarginLoss")
+parser.add_argument('--picked_plot', action='store_true', default = False)
 args = parser.parse_args()
 ##
 # Data
@@ -302,10 +303,11 @@ if __name__ == '__main__':
             arg = np.argsort(uncertainty)
             
             # Plot
-            import plot.plotting as pt
-            pt.dot_plot(np.sort(uncertainty)[-(SUBSET//10):],real_loss[arg][-(SUBSET//10):].tolist(), loc = '.', name = 'picked.png')
-            pt.dot_plot(np.sort(uncertainty)[:-(SUBSET//10)], real_loss[arg][:-(SUBSET//10)].tolist(), loc = '.', name = 'unpicked.png')
-            import sys; sys.exit()
+            if args.picked_plot:
+                import plot.plotting as pt
+                pt.dot_plot(np.sort(uncertainty)[-(SUBSET//10):],real_loss[arg][-(SUBSET//10):].tolist(), loc = '.', name = 'picked.png')
+                pt.dot_plot(np.sort(uncertainty)[:-(SUBSET//10)], real_loss[arg][:-(SUBSET//10)].tolist(), loc = '.', name = 'unpicked.png')
+                import sys; sys.exit()
 
             # Update the labeled dataset and the unlabeled dataset, respectively
             labeled_set += list(torch.tensor(subset)[arg][-ADDENDUM:].numpy())
