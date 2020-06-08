@@ -90,8 +90,11 @@ class ResNet(nn.Module):
         out4 = self.layer4(out3)
         out = F.avg_pool2d(out4, 4)
         out = out.view(out.size(0), -1)
+        self.representations = out
         out = self.linear(out)
         return out, [out1, out2, out3, out4]
+    def representations(self):
+        return self.representations
 
 
 def ResNet18(num_classes = 10):

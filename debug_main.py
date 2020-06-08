@@ -103,8 +103,9 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
 
         optimizers['backbone'].zero_grad()
         optimizers['module'].zero_grad()
-
         scores, features = models['backbone'](inputs)
+        if args.aux1 == 'LogRatioLoss':
+            representations = models['backbone'].representations
         target_loss = criterion(scores, labels)
 
         if epoch > epoch_loss:
@@ -118,9 +119,14 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
 
         m_backbone_loss = torch.sum(target_loss) / target_loss.size(0)
         if args.aux1 == 'None':
-            m_module_loss = 0
+            m_module_loss   = 0
         elif args.aux1 == 'MarginRankingLoss':
             m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
+        elif args.aux1 == 'LogRatioLoss':
+            from auxiliary.logratio import LossToDist, LogRatioLoss
+            gt_dist = LossToDist()(pred_loss)
+            representations = representations.detach()
+            m_module_loss   = LogRatioLoss()(representations, gt_dist)
         if args.aux2 == 'TripletMarginLoss':
             loss_fuc = losses.TripletMarginLoss(margin=0.1)
         elif args.aux2 == 'NPairsLoss':
