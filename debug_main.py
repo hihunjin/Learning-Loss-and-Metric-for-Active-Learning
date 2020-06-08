@@ -39,7 +39,8 @@ from pytorch_metric_learning import losses
 ##parsing
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--loss', type=str, default = "TripletMarginLoss")
+parser.add_argument('--aux1', type=str, default = "None")
+parser.add_argument('--aux2', type=str, default = "None")
 parser.add_argument('--picked_plot', action='store_true', default = False)
 parser.add_argument('--rule', type=str, default = "Random")
 args = parser.parse_args()
@@ -116,21 +117,24 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         pred_loss = pred_loss.view(pred_loss.size(0))
 
         m_backbone_loss = torch.sum(target_loss) / target_loss.size(0)
-        m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
-        if args.loss == 'TripletMarginLoss':
+        if args.aux1 == 'None':
+            m_module_loss = 0
+        elif args.aux1 == 'MarginRankingLoss':
+            m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
+        if args.aux2 == 'TripletMarginLoss':
             loss_fuc = losses.TripletMarginLoss(margin=0.1)
-        elif args.loss == 'NPairsLoss':
+        elif args.aux2 == 'NPairsLoss':
             loss_fuc = losses.NPairsLoss()
-        elif args.loss == 'NCALoss':
+        elif args.aux2 == 'NCALoss':
             loss_fuc = losses.NCALoss()
-        elif args.loss == 'GeneralizedLiftedStructureLoss':
+        elif args.aux2 == 'GeneralizedLiftedStructureLoss':
             loss_fuc = losses.GeneralizedLiftedStructureLoss(neg_margin = 0.1)
-        elif args.loss == 'NTXentLoss':
+        elif args.aux2 == 'NTXentLoss':
             loss_fuc = losses.NTXentLoss(temperature=0.1)
-        elif args.loss == 'ContrastiveLoss':
+        elif args.aux2 == 'ContrastiveLoss':
             loss_fuc = losses.ContrastiveLoss()
         
-        if args.loss == 'None':
+        if args.aux2 == 'None':
             m_module_tloss = 0
         else:
             m_module_tloss  = loss_fuc(embeddings, labels)
@@ -143,9 +147,18 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         # Visualize
         if (iters % 100 == 0) and (vis != None) and (plot_data != None):
             plot_data['X'].append(iters)
+            try:
+                m_module_loss = m_module_loss.item()
+            except:
+                pass
+            try:
+                m_module_tloss = m_module_tloss.item()
+            except:
+                pass
             plot_data['Y'].append([
                 m_backbone_loss.item(),
-                m_module_loss.item(),
+                m_module_loss,
+                m_module_tloss,
                 loss.item()
             ])
             vis.line(
@@ -237,7 +250,7 @@ def get_uncertainty(models, unlabeled_loader):
 # Main
 if __name__ == '__main__':
     vis = visdom.Visdom(server='http://localhost', port=9000)
-    plot_data = {'X': [], 'Y': [], 'legend': ['Backbone Loss', 'Module Loss', 'Total Loss']}
+    plot_data = {'X': [], 'Y': [], 'legend': ['Backbone Loss', 'Auxiliary Loss', 'Metric Loss', 'Total Loss']}
 
     random.seed("Inyoung Cho")
     torch.manual_seed(0)

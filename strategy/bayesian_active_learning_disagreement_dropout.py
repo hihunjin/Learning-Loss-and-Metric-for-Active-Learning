@@ -24,7 +24,7 @@ def predict_prob_dropout_split(models, unlabeled_loader, n_drop):
                 probs[i] = torch.cat((probs[i],prob),0)
         probs[i].cpu()
     probs = torch.stack(probs)
-    return probs
+    return probs.cpu()
 
 
 def BALDDropout(model, loader, n_drop=10):
