@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 def dot_plot(x,y,loc = '.', name = 'plot.png'):
     plt.plot(x,y,'.b')
 #    plt.xticks(ticks=axis1000[:10])
-    plt.xlabel('real loss')
-    plt.ylabel('predicted loss')
+    plt.ylabel('real loss')
+    plt.xlabel('predicted loss')
     plt.savefig(loc+'/' + name)
     plt.close()
 

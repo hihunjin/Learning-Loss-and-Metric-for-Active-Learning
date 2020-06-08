@@ -41,6 +41,7 @@ from pytorch_metric_learning import losses
 parser = argparse.ArgumentParser()
 parser.add_argument('--loss', type=str, default = "TripletMarginLoss")
 parser.add_argument('--picked_plot', action='store_true', default = False)
+parser.add_argument('--rule', type=str, default = "Random")
 args = parser.parse_args()
 ##
 # Data
@@ -295,9 +296,25 @@ if __name__ == '__main__':
                                           sampler=SubsetSequentialSampler(subset), # more convenient if we maintain the order of subset
                                           pin_memory=True)
 
-            # Measure uncertainty of each data points in the subset
-            uncertainty, real_loss = get_uncertainty(models, unlabeled_loader)
-            # uncertainty = get_uncertainty(models, unlabeled_loader)
+            # Measure uncertainty of each data points in the subset         
+            if args.rule == 'LL':
+                uncertainty, real_loss = get_uncertainty(models, unlabeled_loader)
+#                uncertainty = get_uncertainty(models, unlabeled_loader)
+            elif args.rule == 'Entropy':
+                from strategy.entropysampling import EntropySampling
+                uncertainty = EntropySampling(models, unlabeled_loader)
+            elif args.rule == 'Random':
+                uncertainty = torch.rand(len(subset))
+            elif args.rule == 'Margin':
+                from strategy.marginsampling import MarginSampling
+                uncertainty = MarginSampling(models, unlabeled_loader)
+            elif args.rule == 'LeastConfidence':
+                from strategy.least_confidence import LeastConfidence
+                uncertainty = LeastConfidence(models, unlabeled_loader)
+            elif args.rule == 'BALDDropout':
+                from strategy.bayesian_active_learning_disagreement_dropout import BALDDropout
+                uncertainty = BALDDropout(models, unlabeled_loader)
+
 
             # Index in ascending order
             arg = np.argsort(uncertainty)
