@@ -127,6 +127,11 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             gt_dist = LossToDist()(pred_loss)
             representations = representations.detach()
             m_module_loss   = LogRatioLoss()(representations, gt_dist)
+        elif args.aux1 == 'Triplet':
+            loss_fuc_4loss  = losses.TripletMarginLoss(margin=0.1)
+            pred_loss = pred_loss.view(pred_loss.size(0),1)
+            m_module_loss   =loss_fuc_4loss(pred_loss, labels)
+
         if args.aux2 == 'TripletMarginLoss':
             loss_fuc = losses.TripletMarginLoss(margin=0.1)
         elif args.aux2 == 'NPairsLoss':
