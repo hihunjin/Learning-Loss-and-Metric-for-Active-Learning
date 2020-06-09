@@ -263,14 +263,21 @@ if __name__ == '__main__':
     vis = visdom.Visdom(server='http://localhost', port=9000)
     plot_data = {'X': [], 'Y': [], 'legend': ['Backbone Loss', 'Auxiliary Loss', 'Metric Loss', 'Total Loss']}
 
-    random.seed("Inyoung Cho")
-    torch.manual_seed(0)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(0)
+#    random.seed("Inyoung Cho")
+#    torch.manual_seed(0)
+#    torch.backends.cudnn.deterministic = True
+#    torch.backends.cudnn.benchmark = False
+#    np.random.seed(0)
 
 
     for trial in range(TRIALS):
+        # Random seed
+        random.seed(trial)
+        torch.manual_seed(trial)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        np.random.seed(trial)
+        
         # Initialize a labeled dataset by randomly sampling K=ADDENDUM=1,000 data points from the entire dataset.
         indices = list(range(NUM_TRAIN))
         random.shuffle(indices)
