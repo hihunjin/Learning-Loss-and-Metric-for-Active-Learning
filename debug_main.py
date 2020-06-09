@@ -122,6 +122,10 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             m_module_loss   = 0
         elif args.aux1 == 'MarginRankingLoss':
             m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
+        elif args.aux1 == 'MSE':
+            m_module_loss   = nn.MSELoss()(pred_loss, target_loss)
+            WEIGHT = 0.1
+            print(m_module_loss)
         elif args.aux1 == 'LogRatioLoss':
             from auxiliary.logratio import LossToDist, LogRatioLoss
             gt_dist = LossToDist()(pred_loss)
