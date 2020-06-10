@@ -25,7 +25,6 @@ from torchvision.datasets import CIFAR100, CIFAR10
 # Utils
 import visdom
 from tqdm import tqdm
-import argparse
 import sys
 
 # Custom
@@ -36,14 +35,6 @@ from data.sampler import SubsetSequentialSampler
 from pytorch_metric_learning import losses
 
 
-##parsing
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--aux1', type=str, default = "None")
-parser.add_argument('--aux2', type=str, default = "None")
-parser.add_argument('--picked_plot', action='store_true', default = False)
-parser.add_argument('--rule', type=str, default = "Random")
-args = parser.parse_args()
 ##
 # Data
 train_transform = T.Compose([
@@ -306,7 +297,7 @@ if __name__ == '__main__':
             optim_backbone = optim.SGD(models['backbone'].parameters(), lr=LR, 
                                     momentum=MOMENTUM, weight_decay=WDECAY)
             optim_module   = optim.SGD(models['module'].parameters(), lr=LR, 
-                                    momentum=MOMENTUM, weight_decay=WDECAY)
+                                    momentum=MOMENTUM, weight_decay=LWDECAY)
             sched_backbone = lr_scheduler.MultiStepLR(optim_backbone, milestones=MILESTONES)
             sched_module   = lr_scheduler.MultiStepLR(optim_module, milestones=MILESTONES)
 

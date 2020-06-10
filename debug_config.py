@@ -24,6 +24,21 @@ EPOCHL = 120 # After 120 epochs, stop the gradient from the loss prediction modu
 MOMENTUM = 0.9
 WDECAY = 5e-4
 
+
+## parsing
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--aux1', type=str, default = "None")
+parser.add_argument('--aux2', type=str, default = "None")
+parser.add_argument('--picked_plot', action='store_true', default = False)
+parser.add_argument('--rule', type=str, default = "Random")
+args = parser.parse_args()
+
+if args.aux1 == 'MSE':
+    LWDECAY = 0.1
+else:
+    LWDECAY = WDECAY
+
 ''' CIFAR-10 | ResNet-18 | 93.6%
 NUM_TRAIN = 50000 # N
 NUM_VAL   = 50000 - NUM_TRAIN
