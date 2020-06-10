@@ -85,7 +85,7 @@ iters = 0
 def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, vis=None, plot_data=None):
     models['backbone'].train()
     models['module'].train()
-    global iters
+    global iters, WEIGHT
 
     for data in tqdm(dataloaders['train'], leave=False, total=len(dataloaders['train'])): 
         inputs = data[0].cuda()
@@ -322,7 +322,7 @@ if __name__ == '__main__':
                                           pin_memory=True)
 
             # Measure uncertainty of each data points in the subset         
-            if args.rule == 'LL':
+            if args.rule == 'PredictedLoss':
                 uncertainty, real_loss = get_uncertainty(models, unlabeled_loader)
 #                uncertainty = get_uncertainty(models, unlabeled_loader)
             elif args.rule == 'Entropy':
