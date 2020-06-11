@@ -95,7 +95,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         optimizers['backbone'].zero_grad()
         optimizers['module'].zero_grad()
         scores, features = models['backbone'](inputs)
-        if args.aux1 == 'LogRatioLoss':
+        if args.aux3 == 'LogRatioLoss':
             representations = models['backbone'].representations
         target_loss = criterion(scores, labels)
 
@@ -123,15 +123,11 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             features[1] = features[1].detach()
             features[2] = features[2].detach()
             features[3] = features[3].detach()
-        elif args.aux1 == 'LogRatioLoss':
-            from auxiliary.logratio import LossToDist, LogRatioLoss
-            gt_dist = LossToDist()(pred_loss)
-            representations = representations.detach()
-            m_module_loss   = LogRatioLoss()(representations, gt_dist)
         elif args.aux1 == 'Triplet':
             loss_fuc_4loss  = losses.TripletMarginLoss(margin=0.1)
             pred_loss = pred_loss.view(pred_loss.size(0),1)
             m_module_loss   =loss_fuc_4loss(pred_loss, labels)
+
 
         if args.aux2 == 'TripletMarginLoss':
             loss_fuc = losses.TripletMarginLoss(margin=0.1)
@@ -150,7 +146,18 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             m_module_tloss = 0
         else:
             m_module_tloss  = loss_fuc(embeddings, labels)
-        loss            = m_backbone_loss + WEIGHT * m_module_loss + WEIGHT2 * m_module_tloss
+
+
+        if args.aux3 == 'LogRatioLoss':
+            from auxiliary.logratio import LossToDist, LogRatioLoss
+            gt_dist = LossToDist()(pred_loss)
+            representations = representations.detach()
+            m_module_lloss   = LogRatioLoss()(representations, gt_dist)
+        else:
+            m_module_lloss = 0
+
+        
+        loss            = m_backbone_loss + WEIGHT * m_module_loss + WEIGHT2 * m_module_tloss + 0.1 * m_module_lloss
 
         loss.backward()
         optimizers['backbone'].step()
