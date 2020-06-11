@@ -30,12 +30,13 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--aux1', type=str, default = "None")
 parser.add_argument('--aux2', type=str, default = "None")
+parser.add_argument('--aux3', type=str, default = "None")
 parser.add_argument('--picked_plot', action='store_true', default = False)
 parser.add_argument('--rule', type=str, default = "Random")
 args = parser.parse_args()
 
 if args.aux1 == 'MSE':
-    LWDECAY = 0.1
+    LWDECAY = 5e-4
 else:
     LWDECAY = WDECAY
 
