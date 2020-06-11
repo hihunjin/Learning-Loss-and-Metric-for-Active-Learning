@@ -115,7 +115,10 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
         elif args.aux1 == 'MSE':
             m_module_loss   = nn.MSELoss()(pred_loss, target_loss)
-            WEIGHT = 0.1
+            if cycle<2:
+                WEIGHT = 0.001
+            else:
+                WEIGHT = 0.1
             features[0] = features[0].detach()
             features[1] = features[1].detach()
             features[2] = features[2].detach()
