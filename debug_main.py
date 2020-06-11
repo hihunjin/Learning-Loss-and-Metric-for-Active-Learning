@@ -150,6 +150,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
 
         if args.aux3 == 'LogRatioLoss':
             from auxiliary.logratio import LossToDist, LogRatioLoss
+            pred_loss = pred_loss.view(pred_loss.size(0))
             gt_dist = LossToDist()(pred_loss)
             representations = representations.detach()
             m_module_lloss   = LogRatioLoss()(representations, gt_dist)

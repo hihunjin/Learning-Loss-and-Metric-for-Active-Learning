@@ -7,6 +7,7 @@ from torch.autograd import Variable
 from torch.autograd import Function
 import torch.backends.cudnn as cudnn
 from auxiliary.utils import L2dist
+# from utils import L2dist
 
 class LossToDist(nn.Module):
     def __init__(self):
@@ -63,7 +64,7 @@ class LogRatioLoss(nn.Module):
 def main():
     data_size = 100
     input_dim = 3
-    output_dim = 2
+    output_dim = 512
 
     x = Variable(torch.rand(data_size, input_dim), requires_grad=False)
     w = Variable(torch.rand(input_dim, output_dim), requires_grad=True)
