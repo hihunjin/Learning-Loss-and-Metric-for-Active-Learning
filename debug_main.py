@@ -153,6 +153,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
             pred_loss = pred_loss.view(pred_loss.size(0))
             gt_dist = LossToDist()(pred_loss)
             representations = representations.detach()
+            # representations = torch.nn.functional.normalize(representations, p=2, dim=1)
             m_module_lloss   = LogRatioLoss()(representations, gt_dist)
         else:
             m_module_lloss = 0
