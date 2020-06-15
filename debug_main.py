@@ -300,14 +300,15 @@ if __name__ == '__main__':
         test_loader  = DataLoader(cifar10_test, batch_size=BATCH)
         dataloaders  = {'train': train_loader, 'test': test_loader}
         
-        # Model
-        resnet18    = resnet.ResNet18(num_classes=10).cuda()
-        loss_module = lossnet.LossNet().cuda() 
-        models      = {'backbone': resnet18, 'module': loss_module}
-        torch.backends.cudnn.benchmark = True
-
         # Active learning cycles
         for cycle in range(CYCLES):
+            
+            # Model
+            resnet18    = resnet.ResNet18(num_classes=10).cuda()
+            loss_module = lossnet.LossNet().cuda()
+            models      = {'backbone': resnet18, 'module': loss_module}
+            torch.backends.cudnn.benchmark = True
+
             # Loss, criterion and scheduler (re)initialization
             criterion      = nn.CrossEntropyLoss(reduction='none')
             optim_backbone = optim.SGD(models['backbone'].parameters(), lr=LR, 
