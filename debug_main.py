@@ -331,7 +331,10 @@ if __name__ == '__main__':
 
             # Randomly sample 10000 unlabeled data points
             random.shuffle(unlabeled_set)
-            subset = unlabeled_set[:SUBSET]
+            if args.rule in ['PredictedLoss', 'BALDDropout']:
+                subset = unlabeled_set[:SUBSET]
+            else:
+                subset = unlabeled_set
 
             # Create unlabeled dataloader for the unlabeled subset
             unlabeled_loader = DataLoader(cifar10_unlabeled, batch_size=BATCH, 
