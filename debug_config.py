@@ -15,7 +15,7 @@ WEIGHT = 1.0 # lambda
 WEIGHT2 = 1.0 # TripletLoss Metric Loss for Loss module embeddings
 
 TRIALS = 5
-CYCLES = 6
+CYCLES = 10
 
 EPOCH = 200
 LR = 0.1
