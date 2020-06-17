@@ -291,8 +291,8 @@ if __name__ == '__main__':
         # Initialize a labeled dataset by randomly sampling K=ADDENDUM=1,000 data points from the entire dataset.
         indices = list(range(NUM_TRAIN))
         random.shuffle(indices)
-        labeled_set = indices[:ADDENDUM]
-        unlabeled_set = indices[ADDENDUM:]
+        labeled_set = indices[:INITIALQUERY]
+        unlabeled_set = indices[INITIALQUERY:]
         
         train_loader = DataLoader(cifar10_train, batch_size=BATCH, 
                                   sampler=SubsetRandomSampler(labeled_set), 

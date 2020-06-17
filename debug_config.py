@@ -7,14 +7,15 @@ NUM_TRAIN = 50000 # N
 NUM_VAL   = 50000 - NUM_TRAIN
 BATCH     = 128 # B
 SUBSET    = 10000 # M
-ADDENDUM  = 1000 # K
+INITIALQUERY = 5000
+ADDENDUM  = 200 # K
 
 MARGIN = 1.0 # xi
 WEIGHT = 1.0 # lambda
 WEIGHT2 = 1.0 # TripletLoss Metric Loss for Loss module embeddings
 
 TRIALS = 5
-CYCLES = 10
+CYCLES = 6
 
 EPOCH = 200
 LR = 0.1
