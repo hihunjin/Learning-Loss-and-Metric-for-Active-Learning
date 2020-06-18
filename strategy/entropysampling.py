@@ -53,5 +53,5 @@ if __name__== '__main__' :
         sampler=SubsetSequentialSampler(subset), # more convenient if we maintain the order of subset
         pin_memory=True)
 
-    EntropySampling(models, loader)
+    print(EntropySampling(models, loader))
 
