@@ -24,7 +24,7 @@ def predict_prob(models, unlabeled_loader):
 def EntropySampling(model, loader):
     probs = predict_prob(model, loader)
     log_probs = torch.log(probs)
-    U = (probs*log_probs).sum(1)
+    U = -(probs*log_probs).sum(1)
 
     return U
 

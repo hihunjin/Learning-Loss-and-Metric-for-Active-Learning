@@ -26,7 +26,7 @@ def MarginSampling(model, loader):
     probs_sorted, idxs = probs.sort(descending=True)
     U = probs_sorted[:, 0] - probs_sorted[:,1]
 
-    return U
+    return -U
 
 
 

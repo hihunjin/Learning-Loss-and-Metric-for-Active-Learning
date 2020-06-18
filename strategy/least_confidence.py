@@ -25,7 +25,7 @@ def LeastConfidence(model, loader):
     probs = predict_prob(model, loader)
     U = probs.max(1)[0]
 
-    return U
+    return -U
 
 
 

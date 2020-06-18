@@ -347,15 +347,15 @@ if __name__ == '__main__':
 #                uncertainty = get_uncertainty(models, unlabeled_loader)
             elif args.rule == 'Entropy':
                 from strategy.entropysampling import EntropySampling
-                uncertainty = -EntropySampling(models, unlabeled_loader)
+                uncertainty = EntropySampling(models, unlabeled_loader)
             elif args.rule == 'Random':
                 uncertainty = torch.rand(len(subset))
             elif args.rule == 'Margin':
                 from strategy.marginsampling import MarginSampling
-                uncertainty = -MarginSampling(models, unlabeled_loader)
+                uncertainty = MarginSampling(models, unlabeled_loader)
             elif args.rule == 'LeastConfidence':
                 from strategy.least_confidence import LeastConfidence
-                uncertainty = -LeastConfidence(models, unlabeled_loader)
+                uncertainty = LeastConfidence(models, unlabeled_loader)
             elif args.rule == 'BALDDropout':
                 from strategy.bayesian_active_learning_disagreement_dropout import BALDDropout
                 uncertainty = BALDDropout(models, unlabeled_loader)

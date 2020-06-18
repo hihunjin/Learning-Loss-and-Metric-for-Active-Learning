@@ -34,7 +34,7 @@ def BALDDropout(model, loader, n_drop=10):
     entropy2 = (-probs*torch.log(probs)).sum(2).mean(0)
     U = entropy2 - entropy1
 
-    return U
+    return -U
 
 
 
