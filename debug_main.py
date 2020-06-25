@@ -223,10 +223,10 @@ def train(models, criterion, optimizers, schedulers, dataloaders, num_epochs, ep
         os.makedirs(checkpoint_dir)
     
     for epoch in range(num_epochs):
+        train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, vis, plot_data)
+
         schedulers['backbone'].step()
         schedulers['module'].step()
-
-        train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, vis, plot_data)
 
         # Save a checkpoint
         if False and epoch % 5 == 4:
