@@ -13,6 +13,7 @@ ADDENDUM  = 1000 # K
 MARGIN = 1.0 # xi
 WEIGHT = 1.0 # lambda
 WEIGHT2 = 1.0 # TripletLoss Metric Loss for Loss module embeddings
+WEIGHT_MSE = 0.1 #weight for MSE Loss
 
 TRIALS = 5
 CYCLES = 10
@@ -34,6 +35,8 @@ parser.add_argument('--aux2', type=str, default = "None")
 parser.add_argument('--aux3', type=str, default = "None")
 parser.add_argument('--picked_plot', action='store_true', default = False)
 parser.add_argument('--rule', type=str, default = "Random")
+
+parser.add_argument('--gc', action='store_true', default = False) # gradient clipping
 args = parser.parse_args()
 
 if args.aux1 == 'MSE':
