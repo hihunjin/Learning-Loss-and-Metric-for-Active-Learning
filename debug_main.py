@@ -215,14 +215,14 @@ def test(models, dataloaders, mode='val'):
     return 100 * correct / total
 
 #
-def train(models, criterion, optimizers, schedulers, dataloaders, num_epochs, epoch_loss, vis, plot_data):
+def train(models, criterion, optimizers, schedulers, dataloaders, start_num_epoch, num_epochs, epoch_loss, vis, plot_data):
     print('>> Train a Model.')
     best_acc = 0.
     checkpoint_dir = os.path.join('./cifar10', 'train', 'weights')
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
     
-    for epoch in range(num_epochs):
+    for epoch in range(start_num_epoch, num_epochs):
         train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, vis, plot_data)
 
         schedulers['backbone'].step()
@@ -299,12 +299,12 @@ if __name__ == '__main__':
 
             # Training and test
             if args.middle_pick:
-                train(models, criterion, optimizers, schedulers, dataloaders, MILESTONES[0], EPOCHL, vis, plot_data)
+                train(models, criterion, optimizers, schedulers, dataloaders, 0, MILESTONES[0], EPOCHL, vis, plot_data)
                 from strategy.sampler import Sampler
                 uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
-                train(models, criterion, optimizers, schedulers, dataloaders, EPOCH-MILESTONES[0], 0, vis, plot_data)
+                train(models, criterion, optimizers, schedulers, dataloaders, MILESTONES[0], EPOCH, EPOCHL, vis, plot_data)
             else:
-                train(models, criterion, optimizers, schedulers, dataloaders, EPOCH, EPOCHL, vis, plot_data)
+                train(models, criterion, optimizers, schedulers, dataloaders, 0, EPOCH, EPOCHL, vis, plot_data)
                 from strategy.sampler import Sampler
                 uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
             acc = test(models, dataloaders, mode='test')
