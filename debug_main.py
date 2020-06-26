@@ -298,8 +298,15 @@ if __name__ == '__main__':
             schedulers = {'backbone': sched_backbone, 'module': sched_module}
 
             # Training and test
-            train(models, criterion, optimizers, schedulers, dataloaders, EPOCH, EPOCHL, vis, plot_data)
-            
+            if args.middle_pick:
+                train(models, criterion, optimizers, schedulers, dataloaders, MILESTONES[0], EPOCHL, vis, plot_data)
+                from strategy.sampler import Sampler
+                uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
+                train(models, criterion, optimizers, schedulers, dataloaders, EPOCH-MILESTONES[0], 0, vis, plot_data)
+            else:
+                train(models, criterion, optimizers, schedulers, dataloaders, EPOCH, EPOCHL, vis, plot_data)
+                from strategy.sampler import Sampler
+                uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
             acc = test(models, dataloaders, mode='test')
             print('Trial {}/{} || Cycle {}/{} || Label set size {}: Test acc {}'.format(trial+1, TRIALS, cycle+1, CYCLES, len(labeled_set), acc))
 

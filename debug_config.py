@@ -36,6 +36,7 @@ parser.add_argument('--aux3', type=str, default = "None")
 parser.add_argument('--picked_plot', action='store_true', default = False)
 parser.add_argument('--rule', type=str, default = "Random")
 
+parser.add_argument('--middle_pick', action='store_true', default = False) # pick b4 MILESTONES
 parser.add_argument('--gc', action='store_true', default = False) # gradient clipping
 args = parser.parse_args()
 
