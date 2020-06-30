@@ -114,10 +114,13 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         elif args.aux1 == 'MarginRankingLoss':
             m_module_loss   = LossPredLoss(pred_loss, target_loss, margin=MARGIN)
         elif args.aux1 == 'MSE':
+            target_loss = target_loss.detach()
             m_module_loss   = WEIGHT_MSE * nn.MSELoss()(pred_loss, target_loss)
         elif args.aux1 == 'L1':
+            target_loss = target_loss.detach()
             m_module_loss   = WEIGHT_MSE * nn.L1Loss()(pred_loss, target_loss)
         elif args.aux1 == 'SmoothL1':
+            target_loss = target_loss.detach()
             m_module_loss   = WEIGHT_MSE * nn.SmoothL1Loss()(pred_loss, target_loss)
         elif args.aux1 == 'Triplet':
             loss_fuc_4loss  = losses.TripletMarginLoss(margin=0.1)
@@ -164,7 +167,7 @@ def train_epoch(models, criterion, optimizers, dataloaders, epoch, epoch_loss, v
         optimizers['module'].step()
 
         # Visualize
-        if (iters % 100 == 0) and (vis != None) and (plot_data != None):
+        if (iters % 10 == 0) and (vis != None) and (plot_data != None):
             plot_data['X'].append(iters)
             try:
                 m_module_loss = m_module_loss.item()
