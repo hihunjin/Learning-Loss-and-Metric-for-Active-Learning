@@ -310,17 +310,13 @@ if __name__ == '__main__':
                 train(models, criterion, optimizers, schedulers, dataloaders, 0, EPOCH, EPOCHL, vis, plot_data)
                 from strategy.sampler import Sampler
                 uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
+
             acc = test(models, dataloaders, mode='test')
             print('Trial {}/{} || Cycle {}/{} || Label set size {}: Test acc {}'.format(trial+1, TRIALS, cycle+1, CYCLES, len(labeled_set), acc))
 
-            ##
-            #  Update the labeled dataset via loss prediction-based uncertainty measurement
-            from strategy.sampler import Sampler
-            uncertainty, real_loss, subset = Sampler(args.rule, models, cifar10_unlabeled, unlabeled_set)
-
             # Index in ascending order
             arg = np.argsort(uncertainty)
-            
+
             # Plot
             if args.picked_plot:
                 import plot.plotting as pt
